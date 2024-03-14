@@ -23,6 +23,30 @@ public class Kunde
         this.passord = passord;
     }
 
+
+
+    @Override
+    public String toString() {
+        return "Kunde{" +
+                "personnummer='" + personnummer + '\'' +
+                ", fornavn='" + fornavn + '\'' +
+                ", etternavn='" + etternavn + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", postnr='" + postnr + '\'' +
+                ", poststed='" + poststed + '\'' +
+                ", telefonnr='" + telefonnr + '\'' +
+                ", passord='" + passord + '\'' +
+                '}';
+    }
+
+
+
+
+
+
+
+
+
     public Kunde() {
     }
 

@@ -11,6 +11,7 @@ import oslomet.testing.Models.Kunde;
 import oslomet.testing.Models.Transaksjon;
 import oslomet.testing.Sikkerhet.Sikkerhet;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 @RestController
@@ -90,11 +91,38 @@ public class BankController {
 
     @PostMapping("/endreKundeInfo")
     public String endre(Kunde innKunde) {
+        System.out.println("Kunde object: " + innKunde.toString());
         String personnummer = sjekk.loggetInn();
         if (personnummer!=null) {
+            System.out.println("Kunde object: " + innKunde.toString());
                 innKunde.setPersonnummer(personnummer);
                 return repository.endreKundeInfo(innKunde);
             }
         return null;
     }
+    @Autowired
+    public DataSource dataSource;
+    @GetMapping("/initDB")
+    public String initDB(){
+        return repository.initDB(dataSource);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
