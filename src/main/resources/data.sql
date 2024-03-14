@@ -2,6 +2,7 @@
 -- Dataark for tabell `Konto`
 --
 
+
 INSERT INTO `Konto` (`Kontonummer`, `Personnummer`, `Saldo`, `Type`, `Valuta`) VALUES
 ('105010123456', '01010110523', 720, 'Lønnskonto', 'NOK'),
 ('105020123456', '01010110523', 100500, 'Sparekonto', 'NOK'),

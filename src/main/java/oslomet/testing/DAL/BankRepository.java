@@ -1,13 +1,20 @@
 package oslomet.testing.DAL;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Repository;
 import oslomet.testing.Models.Konto;
 import oslomet.testing.Models.Kunde;
 import oslomet.testing.Models.Transaksjon;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
@@ -15,6 +22,7 @@ public class BankRepository {
 
     @Autowired
     private JdbcTemplate db;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminRepository.class);
 
     public Konto hentTransaksjoner(String kontonr, String fraDato, String tilDato) {
         if(fraDato.equals("")) {
@@ -72,7 +80,7 @@ public class BankRepository {
             return konti;
         }
         catch(Exception e){
-            return null;
+            return null ;
         }
     }
     
@@ -101,7 +109,7 @@ public class BankRepository {
             return null;
         }
     }
-    
+
     public String utforBetaling(int txID)  {
         try {
             // hent Belop og Kontonummer fra Transaksjonenen
@@ -142,6 +150,8 @@ public class BankRepository {
         }
     }
 
+/*
+
     public String endreKundeInfo(Kunde kunde) {
         // Sjekk om nytt postnr ligger i Poststeds-tabellen, dersom ikke legg det inn
         String sql = "SELECT count(*) FROM Poststed WHERE postnr = ?";
@@ -169,5 +179,92 @@ public class BankRepository {
             return "Feil";
         }
         return "OK";
+    }
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+    public String endreKundeInfo(Kunde kunde) {
+        System.out.println("Kunde object: " + kunde.toString());
+        System.out.println("Kunde object: " + kunde);
+
+        LOGGER.info("Kunde object: {}", kunde);
+        String sql;
+        int etPostSted;
+        System.out.println("Kunde object: " + kunde);
+        try {
+            sql = "SELECT count(*) FROM Poststed WHERE postnr = ?";
+            etPostSted = db.queryForObject(sql, Integer.class, kunde.getPostnr());
+        }
+        catch (Exception e){
+            System.out.println("Kunde object: " + kunde.toString());
+            e.printStackTrace();
+            return "Feil1: " + e.getMessage();
+        }
+        if(etPostSted == 0) {
+            try {
+                System.out.println("Kunde object: " + kunde.toString());
+                sql = "Insert Into Poststed (Postnr, Poststed) Values (?,?)";
+                db.update(sql, kunde.getPostnr(), kunde.getPoststed());
+
+            }
+            catch(Exception e){
+                System.out.println("Kunde object: " + kunde.toString());
+                e.printStackTrace();
+                return "Feil2: " + e.getMessage();
+            }
+        }
+        try {
+            sql = "Update Kunde Set Fornavn = ?, Etternavn = ?," +
+                    " Adresse = ?, Postnr = ?, Telefonnr = ?, Passord =? Where Personnummer = ?";
+            db.update(sql, kunde.getFornavn(), kunde.getEtternavn(), kunde.getAdresse(), kunde.getPostnr(),
+                    kunde.getTelefonnr(), kunde.getPassord(), kunde.getPersonnummer());
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return "Feil: " + e.getMessage();
+        }
+        return "OK";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public String initDB(DataSource dataSource){
+        try{
+            Resource skjema = new ClassPathResource("schema.sql");
+            Resource data = new  ClassPathResource("data.sql");
+            ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator(skjema,data);
+            databasePopulator.execute(dataSource);
+            return "OK";
+        }
+        catch(Exception e){
+            return "Feil";
+        }
     }
 }

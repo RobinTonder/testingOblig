@@ -39,6 +39,7 @@ public class AdminKontoControllerTest {
     @Test
     public void hentAlleKonti_LoggetInn() {
         List<Konto> expectedKonti = Arrays.asList(new Konto(), new Konto());
+
         when(sjekk.loggetInn()).thenReturn("01010110523");
         when(repository.hentAlleKonti()).thenReturn(expectedKonti);
 
